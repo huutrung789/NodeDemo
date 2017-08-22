@@ -15,6 +15,8 @@ request({
         console.log(body.results[0].geometry.location.lat);
         var lat = body.results[0].geometry.location.lat;
         var lng = body.results[0].geometry.location.lng;
+
+        //callback
         // weather.weather(lat,lng, (errorMessage, body) => {
         //     if (errorMessage) {
         //         console.log(errorMessage);
@@ -23,6 +25,8 @@ request({
         //     }
         // });
         //Call weathe API by promises
+
+        //Promises
         weathePromise.callWeatherAPI(lat, lng).then((result) => {
             console.log('Call API Weathe - Promises:', result);
         }).catch((errorMessage) => {

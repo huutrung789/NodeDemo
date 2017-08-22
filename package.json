@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+//    "start": "node ./bin/www"
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "6.10.3"
   },
   "dependencies": {
-    "body-parser": "~1.17.1",
+    "body-parser": "^1.17.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "errorhandler": "^1.5.0",
@@ -17,6 +21,7 @@
     "lodash": "^4.17.4",
     "method-override": "^2.3.9",
     "mongodb": "2.2.30",
+    "mongoose": "^4.11.7",
     "mongoskin": "^2.1.0",
     "morgan": "~1.8.1",
     "nodemon": "^1.11.0",
