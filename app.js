@@ -18,7 +18,7 @@ const mongo = require('mongoskin');
 var dbUrl = process.env.MONGOHQ_URL | 'mongodb://@localhost:27017/test';
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+// var users = require('./routes/users');
 
 var app = express();
 app.locals.appTitle = 'My page - Trung';
