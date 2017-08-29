@@ -6,6 +6,7 @@ const  {ObjectID} = require('mongodb').ObjectID;
 
 var {Users} = require('./model/users');
 var {Todos} = require('./model/todos');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 var router = express.Router();
@@ -15,11 +16,12 @@ app.use(bodyParser.json());
 
 
 // ===== TODO API ====
-//post
-app.post('/todos', (req, res) => {
+//post - create todos
+app.post('/todos', authenticate, (req, res) => {
     console.log(req.body);
     var todo = new Todos({
-        name: req.body.name
+        name: req.body.name,
+        creator: req.user._id
     });
 
     todo.save().then((docs) => {
@@ -32,7 +34,7 @@ app.post('/todos', (req, res) => {
 
 
 //get
-app.get('/todos', (req, res) => {
+app.get('/todos', authenticate,(req, res) => {
     Todos.find().then((listDocs) => {
         res.send(listDocs);
     }, (err) => {
@@ -78,6 +80,53 @@ app.delete('/todos/:id', (req, res) => {
 
 
 // ====== USERS API ===========
+
+
+//Authenticate
+app.post('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
+});
+
+// //Login
+
+//Login 1
+app.post('/users/login', (req, res) => {
+    Users.findOneCredentials(req.body.email, req.body.password)
+        .then((user) => {
+            return user.generateAuthToken().then((token) => {
+                res.header({'x-auth': token}).send(user);
+        });
+    }).catch((err) => {
+        res.status(400).send(err);
+    });
+});
+
+
+//Try Login 2: chainable Promises - not success
+app.post('/users/login2', (req, res) => {
+    Users.findOneCredentials(req.body.email, req.body.password)
+        .then((user) => {
+            return user.generateAuthToken();
+        }).then((token) => {
+            res.header({'x-auth': token}).send(user);
+        }).catch((err) => {
+            res.status(400).send(err);
+        });
+});
+
+
+//Logout
+app.delete('/users/logout', authenticate, (req, res) => {
+    var token = req.header('x-auth');
+    console.log(req.user);
+    req.user.removeToken(token).then((user) => {
+        res.send(user);
+    }).catch((err) => {
+        res.status(400).send(err);
+    });
+});
+
+//Signup
 app.post('/users/signup', (req, res) => {
     var body = req.body;
     var user = new  Users ({
@@ -85,14 +134,13 @@ app.post('/users/signup', (req, res) => {
         password: body.password
     });
 
+    //Chainable Promises
     user.save()
         .then(() => {
             return user.generateAuthToken();
-        })
-        .then((token) => {
+        }).then((token) => {
             res.header({'x-auth': token}).send(user);
-        })
-        .catch((error) => {
+        }).catch((error) => {
             res.status(400).send(error);
         });
 });

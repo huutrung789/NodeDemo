@@ -9,8 +9,12 @@ var Todos = mongoose.model('Todos', {
     completed: {
         type: Boolean,
         default: true
+    },
+    creator: {
+       type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 });
 
 
-module.exports = {Todos};
+module.exports.Todos = Todos;
