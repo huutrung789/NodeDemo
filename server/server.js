@@ -7,6 +7,7 @@ const  {ObjectID} = require('mongodb').ObjectID;
 var {Users} = require('./model/users');
 var {Todos} = require('./model/todos');
 var {authenticate} = require('./middleware/authenticate');
+var config = require('./config/config.json');
 
 var app = express();
 var router = express.Router();

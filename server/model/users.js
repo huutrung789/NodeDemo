@@ -4,7 +4,7 @@ const  jwt = require('jsonwebtoken');
 const  _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
-var secret = 'secret';
+var secret = process.env.JWT_SECRET;
 var SchemeUser = new mongoose.Schema({
     email: {
         type: String,
