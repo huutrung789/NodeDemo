@@ -4,7 +4,7 @@ const  jwt = require('jsonwebtoken');
 const  _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
-var secret = process.env.JWT_SECRET;
+
 var SchemeUser = new mongoose.Schema({
     email: {
         type: String,
@@ -76,7 +76,7 @@ SchemeUser.statics.findByToken = function(token) {
     var user = this;
     var decoded;
     try {
-        decoded = jwt.verify(token, secret);
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
         return Promise.reject(err);
     }
@@ -98,16 +98,12 @@ SchemeUser.statics.findOneCredentials = function (email, password) {
         //validate password
         return new Promise((resolve, reject) => {
             bcrypt.compare(password, user.password).then((result) => {
-                resolve(user);
+            return resolve(user);
             }).catch((err) => {
-                reject(err);
+            return reject(err);
             });
         });
-        // bcrypt.compare(password, user.password).then((result) => {
-        //     return Promise.resolve(user);
-        // }).catch((err) => {
-        //     return Promise.reject(err);
-        // });
+
 
     }).catch((error) => {
         return Promise.reject(error);
@@ -134,7 +130,7 @@ SchemeUser.methods.removeToken = function (token) {
 SchemeUser.methods.generateAuthToken = function() {
     var user = this;
     var access = 'auth';
-    var token = jwt.sign({_id: user._id.toHexString(), access}, secret).toString();
+    var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
     user.tokens.push({access, token});
     return user
             .save()
@@ -150,4 +146,4 @@ SchemeUser.methods.generateAuthToken = function() {
 var Users = mongoose.model('Users', SchemeUser);
 
 
-module.exports.Users = Users;
+module.exports = {Users};

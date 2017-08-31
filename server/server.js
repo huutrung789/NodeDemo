@@ -1,5 +1,6 @@
 
 var  express = require('express');
+var config = require('./config/config.js');
 const  bodyParser = require('body-parser');
 const  {mongoose} = require('./mongoose');
 const  {ObjectID} = require('mongodb').ObjectID;
@@ -7,7 +8,6 @@ const  {ObjectID} = require('mongodb').ObjectID;
 var {Users} = require('./model/users');
 var {Todos} = require('./model/todos');
 var {authenticate} = require('./middleware/authenticate');
-var config = require('./config/config.json');
 
 var app = express();
 var router = express.Router();
@@ -28,7 +28,7 @@ app.post('/todos', authenticate, (req, res) => {
     todo.save().then((docs) => {
         res.send(docs);
     }, (error) => {
-        res.status(400).send(error);
+        res.status(400).send({"error": error.toString()});
     });
 
 });
@@ -39,7 +39,7 @@ app.get('/todos', authenticate,(req, res) => {
     Todos.find().then((listDocs) => {
         res.send(listDocs);
     }, (err) => {
-        res.status(400).send(err);
+        res.status(400).send({"error": err.toString()});
     });
 
 });
@@ -56,7 +56,7 @@ app.post('/todoById', (req, res) => {
     }).then((docs) => {
         res.send(docs);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send({"error": error.toString()});
     });
 });
 
@@ -74,7 +74,7 @@ app.delete('/todos/:id', (req, res) => {
 
         res.json(docs);
     }, (error) => {
-        res.status(400).send({'Error': error});
+        res.status(400).send({"error": error.toString()});
     });
 });
 
@@ -98,7 +98,8 @@ app.post('/users/login', (req, res) => {
                 res.header({'x-auth': token}).send(user);
         });
     }).catch((err) => {
-        res.status(400).send(err);
+        console.log(err);
+        res.status(400).send({"error": error.toString()});
     });
 });
 
@@ -111,7 +112,7 @@ app.post('/users/login2', (req, res) => {
         }).then((token) => {
             res.header({'x-auth': token}).send(user);
         }).catch((err) => {
-            res.status(400).send(err);
+            res.status(400).send({"error": err.toString()});
         });
 });
 
@@ -123,7 +124,7 @@ app.delete('/users/logout', authenticate, (req, res) => {
     req.user.removeToken(token).then((user) => {
         res.send(user);
     }).catch((err) => {
-        res.status(400).send(err);
+        res.status(400).send({"error": err.toString()});
     });
 });
 
@@ -142,7 +143,7 @@ app.post('/users/signup', (req, res) => {
         }).then((token) => {
             res.header({'x-auth': token}).send(user);
         }).catch((error) => {
-            res.status(400).send(error);
+            res.status(400).send({"error": error.toString()});
         });
 });
 

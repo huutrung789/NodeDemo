@@ -8,3 +8,5 @@ if (env === 'development' || env === 'Test') {
         process.env[key] = configEnv[key];
     });
 }
+
+//else: Heroku
